@@ -12,7 +12,7 @@ namespace File
 {
     public class LerArquivo
     {
-
+        
         //gerenciar arquivo
         public static List<Passageiro>? getDataPassageiro(string pathFile)
         {
