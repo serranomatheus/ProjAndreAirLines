@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using File;
+using Model;
 
 namespace Data
 {
@@ -118,10 +120,48 @@ namespace Data
                     sql_cmnd.Parameters.AddWithValue("@Destino", SqlDbType.NVarChar).Value = voo.Destino;
                     sql_cmnd.Parameters.AddWithValue("@Origem", SqlDbType.NVarChar).Value = voo.Origem;
                     sql_cmnd.Parameters.AddWithValue("@Aeronave", SqlDbType.NVarChar).Value = voo.Aeronave;
-                    sql_cmnd.Parameters.AddWithValue("@HorarioEmbarque",SqlDbType.DateTime).Value = voo.HorarioEmbarque;
+                    sql_cmnd.Parameters.AddWithValue("@HorarioEmbarque", SqlDbType.DateTime).Value = voo.HorarioEmbarque;
                     sql_cmnd.Parameters.AddWithValue("@HorarioDesembarque", SqlDbType.DateTime).Value = voo.HorarioDesembarque;
 
                     sql_cmnd.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+        }
+
+        public static void InserirPassagem(List<Passageiro> passageiro, List<Voo> voo)
+        {
+            SqlConnection connection = new SqlConnection(connString);
+            try
+            {
+                using (connection)
+                {
+                    connection.Open();
+                    
+
+                    foreach (Voo v in voo)
+                    {
+                        foreach (Passageiro p in passageiro)
+                        {
+                            SqlCommand sql_cmnd = new SqlCommand("InserirPassagem", connection);
+                            sql_cmnd.CommandType = CommandType.StoredProcedure;
+
+                            sql_cmnd.Parameters.AddWithValue("@Voo", SqlDbType.Int).Value = v.Id;
+
+                            sql_cmnd.Parameters.AddWithValue("@Passageiro", SqlDbType.NVarChar).Value = p.Cpf;
+
+                            sql_cmnd.ExecuteNonQuery();
+
+                        }
+                        
+                    }
+
+                    
                     connection.Close();
                 }
             }
@@ -216,5 +256,74 @@ namespace Data
             }
         }
 
+        public static List<Passageiro> BuscarPassageiro()
+        {
+            SqlConnection connection = new SqlConnection(connString);
+            try
+            {
+                List<Passageiro> lstPassageiro = new List<Passageiro>();
+
+                using (connection)
+                {
+                    connection.Open();
+
+                    String sql = "SELECT Cpf from dbo.Passageiro";
+
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                lstPassageiro.Add(new Passageiro(reader.GetString(0)));
+                            }
+                        }
+                    }
+                    connection.Close();
+                    return lstPassageiro;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadKey();
+                return null;
+            }
+        }
+        public static List<Voo> BuscarVoo()
+        {
+            SqlConnection connection = new SqlConnection(connString);
+            try
+            {
+                List<Voo> lstVoo = new List<Voo>();
+
+                using (connection)
+                {
+                    connection.Open();
+
+                    String sql = "SELECT Id from dbo.Voo";
+
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                lstVoo.Add(new Voo(reader.GetInt32(0)));
+                            }
+                        }
+                    }
+                    connection.Close();
+                    return lstVoo;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadKey();
+                return null;
+            }
+        }
     }
 }
+

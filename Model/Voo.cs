@@ -22,5 +22,11 @@ namespace Model
         [JsonProperty("horariodesembarque")]
         public DateTime HorarioDesembarque { get; set; }
         #endregion 
+
+        public Voo(int id)
+        {
+            Id = id;
+        }
     }
+    
 }

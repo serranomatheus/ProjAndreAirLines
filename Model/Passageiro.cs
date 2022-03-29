@@ -7,7 +7,7 @@ namespace Model
     {
         #region Propriedades
         [JsonProperty("cpf")]
-        public Int64? Cpf { get; set; }
+        public string? Cpf { get; set; }
 
         [JsonProperty("nome")]
         public string? Nome { get; set; }
@@ -23,6 +23,13 @@ namespace Model
 
         [JsonProperty("endereco")]
         public int Endereco { get; set; }
+
+        public Passageiro(string cpf)
+        {
+            Cpf = cpf;
+        }
+
+        
 
         public override string ToString()
         {
